@@ -1,0 +1,22 @@
+Index: app/src/main/res/layout/activity_account_detail.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_account_detail.xml b/app/src/main/res/layout/activity_account_detail.xml
+--- a/app/src/main/res/layout/activity_account_detail.xml	
++++ b/app/src/main/res/layout/activity_account_detail.xml	(date 1717097339004)
+@@ -9,13 +9,6 @@
+         android:layout_height="wrap_content"
+         android:orientation="vertical">
+ 
+-        <!-- Barra de separación -->
+-        <View
+-            android:id="@+id/separator"
+-            android:layout_width="match_parent"
+-            android:layout_height="2dp"
+-            android:background="?android:attr/listDivider" />
+-
+         <LinearLayout
+             android:id="@+id/participants_layout"
+             android:layout_width="match_parent"

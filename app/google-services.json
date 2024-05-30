@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "833402400139",
+    "project_id": "kontuapp-a5bf4",
+    "storage_bucket": "kontuapp-a5bf4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833402400139:android:4c51a6cfd7352ea735938e",
+        "android_client_info": {
+          "package_name": "com.iazkue.kontuapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "833402400139-r3fpl2p8i4h7377b3t6lvui2pr9vfuei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtXhHslSr0B1a27psnR13fvGYMqjJ1kiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "833402400139-r3fpl2p8i4h7377b3t6lvui2pr9vfuei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

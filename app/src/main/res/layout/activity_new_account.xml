@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Spinner
+        android:id="@+id/spinner_society"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/select_society" />
+
+    <EditText
+        android:id="@+id/edit_text_total_cost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Guztirako prezioa"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/edit_text_participants"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Partaideak"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/button_save_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Kontua gorde" />
+</LinearLayout>

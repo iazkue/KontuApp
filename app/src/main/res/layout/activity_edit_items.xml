@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <AutoCompleteTextView
+        android:id="@+id/auto_complete_text_view_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Produktoa"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/edit_text_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Kopurua"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/edit_text_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Prezioa"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Item" />
+</LinearLayout>
