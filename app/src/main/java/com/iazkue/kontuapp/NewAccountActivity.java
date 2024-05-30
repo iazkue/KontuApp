@@ -11,6 +11,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -168,14 +172,35 @@ public class NewAccountActivity extends AppCompatActivity {
         account.societyId = selectedSociety.id; // Guardar el ID de la sociedad
         account.dateCreated = new Date(); // Establecer la fecha y hora de creación
 
-        db.accountDao().insert(account);
-
-        Toast.makeText(this, "Kontua zuzenki gordea", Toast.LENGTH_SHORT).show();
-
-        // Finish this activity and return to the main activity
-        setResult(RESULT_OK);
-        finish();
+        try {
+            db.accountDao().insert(account);
+            Toast.makeText(this, "Kontua zuzenki gordea", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
+        } catch (Exception e) {
+            // Mostrar mensaje de error
+            Toast.makeText(this, "Errorea: ezin izan da kontua gorde", Toast.LENGTH_SHORT).show();
+            // Guardar el error en un archivo de registro
+            logErrorToFile(e);
+        }
     }
+
+    private void logErrorToFile(Exception e) {
+        try {
+            FileOutputStream fos = openFileOutput("error_log.txt", MODE_APPEND);
+            PrintWriter writer = new PrintWriter(fos);
+            writer.println("Error occurred: " + new Date().toString());
+            writer.println(e.getMessage());
+            for (StackTraceElement element : e.getStackTrace()) {
+                writer.println(element.toString());
+            }
+            writer.println();
+            writer.close();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
+
 
     @Override
     protected void onResume() {
