@@ -87,31 +87,36 @@ public class AddItemActivity extends AppCompatActivity {
         }
         double price = Double.parseDouble(priceStr);
 
-        Item selectedItem = db.itemDao().getItemByName(itemName);
-        if (selectedItem == null) {
-            selectedItem = new Item(itemName);
-            db.itemDao().insert(selectedItem);
-            selectedItem = db.itemDao().getItemByName(itemName); // Get the item with the generated ID
-            items.add(selectedItem);
-            adapter.notifyDataSetChanged();
+        try {
+            Item selectedItem = db.itemDao().getItemByName(itemName);
+            if (selectedItem == null) {
+                selectedItem = new Item(itemName);
+                db.itemDao().insert(selectedItem);
+                selectedItem = db.itemDao().getItemByName(itemName); // Get the item with the generated ID
+                items.add(selectedItem);
+                adapter.notifyDataSetChanged();
+            }
+
+            ItemPrice itemPrice = new ItemPrice();
+            itemPrice.societyId = societyId;
+            itemPrice.itemId = selectedItem.id;
+            itemPrice.price = price;
+            db.itemPriceDao().upsert(itemPrice);
+
+            AccountDetail accountDetail = new AccountDetail();
+            accountDetail.accountId = accountId;
+            accountDetail.itemId = selectedItem.id;
+            accountDetail.quantity = quantity;
+            accountDetail.participant = participant;
+            db.accountDetailDao().insert(accountDetail);
+
+            Toast.makeText(this, "Produktua zuzenki gehitu da", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
+        } catch (Exception e) {
+            Toast.makeText(this, "Errorea: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
-
-        ItemPrice itemPrice = new ItemPrice();
-        itemPrice.societyId = societyId;
-        itemPrice.itemId = selectedItem.id;
-        itemPrice.price = price;
-        db.itemPriceDao().insert(itemPrice);
-
-        AccountDetail accountDetail = new AccountDetail();
-        accountDetail.accountId = accountId;
-        accountDetail.itemId = selectedItem.id;
-        accountDetail.quantity = quantity;
-        accountDetail.participant = participant;
-        db.accountDetailDao().insert(accountDetail);
-
-        Toast.makeText(this, "Produktua zuzenki gehitu da", Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);
-        finish();
     }
 
     private void showDeleteItemDialog(Item item) {

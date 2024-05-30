@@ -59,11 +59,11 @@ public class EditItemsActivity extends AppCompatActivity {
     }
 
     private void saveItem() {
-        Item selectedItem = (Item) autoCompleteTextViewItems.getAdapter().getItem(autoCompleteTextViewItems.getListSelection());
+        String itemName = autoCompleteTextViewItems.getText().toString().trim();
         String quantityStr = editTextQuantity.getText().toString();
         String priceStr = editTextPrice.getText().toString();
 
-        if (selectedItem == null || quantityStr.isEmpty() || priceStr.isEmpty()) {
+        if (itemName.isEmpty() || quantityStr.isEmpty() || priceStr.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -71,13 +71,25 @@ public class EditItemsActivity extends AppCompatActivity {
         int quantity = Integer.parseInt(quantityStr);
         double price = Double.parseDouble(priceStr);
 
+        Item selectedItem = db.itemDao().getItemByName(itemName);
+        if (selectedItem == null) {
+            selectedItem = new Item(itemName);
+            db.itemDao().insert(selectedItem);
+            selectedItem = db.itemDao().getItemByName(itemName); // Get the item with the generated ID
+        }
+
         // Save item price for the society
         ItemPrice itemPrice = new ItemPrice();
         itemPrice.societyId = societyId;
         itemPrice.itemId = selectedItem.id;
         itemPrice.price = price;
-        db.itemPriceDao().insert(itemPrice);
 
-        Toast.makeText(this, "Item saved successfully", Toast.LENGTH_SHORT).show();
+        try {
+            db.itemPriceDao().upsert(itemPrice);
+            Toast.makeText(this, "Item saved successfully", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error saving item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 }
