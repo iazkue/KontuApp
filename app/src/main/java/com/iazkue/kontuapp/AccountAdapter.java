@@ -16,10 +16,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
 
     private List<Account> accountList;
     private Context context;
+    private AppDatabase db;
 
     public AccountAdapter(List<Account> accountList, Context context) {
         this.accountList = accountList;
         this.context = context;
+        this.db = AppDatabase.getDatabase(context);
     }
 
     @NonNull
@@ -32,11 +34,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
 
     @Override
     public void onBindViewHolder(@NonNull AccountViewHolder holder, int position) {
+
         Account account = accountList.get(position);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String formattedDate = dateFormat.format(account.dateCreated);
 
-        holder.accountName.setText(String.format("%s | %s", formattedDate, account.participants));
+        holder.accountName.setText(String.format("%s | %s", db.societyDao().getSocietyById(account.societyId).getName()  .toUpperCase() , formattedDate));
         holder.accountTotalCost.setText(String.valueOf(account.totalCost));
 
         holder.itemView.setOnClickListener(v -> {

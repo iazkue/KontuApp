@@ -13,4 +13,8 @@ public class Society {
     public String toString() {
         return name; // Para que el ArrayAdapter use el nombre de la sociedad
     }
+
+    public String getName() {
+        return name;
+    }
 }
