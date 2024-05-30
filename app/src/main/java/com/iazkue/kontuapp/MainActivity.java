@@ -12,6 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +29,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Set the custom exception handler
+        Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler(this));
+
         setContentView(R.layout.activity_main);
 
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
@@ -45,6 +55,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
         loadAccounts();
+    }
+
+    private void showErrorLog() {
+        StringBuilder log = new StringBuilder();
+        try {
+            FileInputStream fis = openFileInput("error_log.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                log.append(line).append("\n");
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Error Log")
+                .setMessage(log.toString())
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private void loadAccounts() {
