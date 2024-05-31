@@ -6,7 +6,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ public class EditItemsActivity extends AppCompatActivity {
     private EditText editTextQuantity, editTextPrice;
     private Button buttonSave;
     private AppDatabase db;
-    private int societyId = 1; // Example societyId
+    private int societyId; // Ejemplo de societyId
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +28,9 @@ public class EditItemsActivity extends AppCompatActivity {
         editTextQuantity = findViewById(R.id.edit_text_quantity);
         editTextPrice = findViewById(R.id.edit_text_price);
         buttonSave = findViewById(R.id.button_save);
+
+        // Obtener societyId de algún lugar, por ejemplo, a través de un Intent
+        societyId = getIntent().getIntExtra("SOCIETY_ID", -1);
 
         loadItems();
 
@@ -64,7 +66,7 @@ public class EditItemsActivity extends AppCompatActivity {
         String priceStr = editTextPrice.getText().toString();
 
         if (itemName.isEmpty() || quantityStr.isEmpty() || priceStr.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Mesedez, bete eremu guztiak", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -75,10 +77,9 @@ public class EditItemsActivity extends AppCompatActivity {
         if (selectedItem == null) {
             selectedItem = new Item(itemName);
             db.itemDao().insert(selectedItem);
-            selectedItem = db.itemDao().getItemByName(itemName); // Get the item with the generated ID
+            selectedItem = db.itemDao().getItemByName(itemName); // Obtener el item con el ID generado
         }
 
-        // Save item price for the society
         ItemPrice itemPrice = new ItemPrice();
         itemPrice.societyId = societyId;
         itemPrice.itemId = selectedItem.id;
@@ -86,10 +87,10 @@ public class EditItemsActivity extends AppCompatActivity {
 
         try {
             db.itemPriceDao().upsert(itemPrice);
-            Toast.makeText(this, "Item saved successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Produktua zuzenki gehitu da", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(this, "Error saving item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Toast.makeText(this, "Errorea produktua gehitzean", Toast.LENGTH_SHORT).show();
         }
     }
 }

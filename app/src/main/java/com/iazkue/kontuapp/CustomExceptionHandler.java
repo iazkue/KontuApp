@@ -1,7 +1,9 @@
 package com.iazkue.kontuapp;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +26,8 @@ public class CustomExceptionHandler implements Thread.UncaughtExceptionHandler {
         String stackTrace = sw.toString();
 
         // Save the stack trace to a file
-        try (FileOutputStream fos = context.openFileOutput("error_log.txt", Context.MODE_PRIVATE)) {
+        File logFile = new File(context.getExternalFilesDir(null), "error_log.txt");
+        try (FileOutputStream fos = new FileOutputStream(logFile)) {
             fos.write(stackTrace.getBytes());
         } catch (IOException e) {
             e.printStackTrace();

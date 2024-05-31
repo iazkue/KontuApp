@@ -9,12 +9,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddItemActivity extends AppCompatActivity {
     private AutoCompleteTextView autoCompleteTextViewItems;
     private EditText editTextQuantity, editTextPrice;
-    private Button buttonAddItem;
+    private Button buttonSave;
     private AppDatabase db;
     private int accountId;
     private String participant;
@@ -25,19 +27,14 @@ public class AddItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item);
+        setContentView(R.layout.activity_edit_items);
 
         db = AppDatabase.getDatabase(getApplicationContext());
 
         autoCompleteTextViewItems = findViewById(R.id.auto_complete_text_view_items);
         editTextQuantity = findViewById(R.id.edit_text_quantity);
         editTextPrice = findViewById(R.id.edit_text_price);
-        buttonAddItem = findViewById(R.id.button_add_item);
-
-        accountId = getIntent().getIntExtra("ACCOUNT_ID", -1);
-        participant = getIntent().getStringExtra("PARTICIPANT");
-        Account account = db.accountDao().getAccountById(accountId);
-        societyId = account.societyId;
+        buttonSave = findViewById(R.id.button_save);
 
         loadItems();
 
@@ -45,29 +42,25 @@ public class AddItemActivity extends AppCompatActivity {
             Item selectedItem = (Item) parent.getItemAtPosition(position);
             ItemPrice lastPrice = db.itemPriceDao().getLastPrice(societyId, selectedItem.id);
             if (lastPrice != null) {
-                editTextPrice.setText(String.format("%.2f", lastPrice.price));
+                editTextPrice.setText(String.valueOf(lastPrice.price));
             } else {
                 editTextPrice.setText("");
             }
         });
 
-        autoCompleteTextViewItems.setOnLongClickListener(v -> {
-            String itemName = autoCompleteTextViewItems.getText().toString().trim();
-            if (!itemName.isEmpty()) {
-                Item item = db.itemDao().getItemByName(itemName);
-                if (item != null) {
-                    showDeleteItemDialog(item);
-                }
-            }
-            return true;
-        });
-
-        buttonAddItem.setOnClickListener(v -> addItem());
+        buttonSave.setOnClickListener(v -> saveItem());
     }
 
     private void loadItems() {
-        items = db.itemDao().getAllItems();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
+        List<ItemPrice> itemPrices = db.itemPriceDao().getItemsBySociety(societyId);
+        List<Item> items = new ArrayList<>();
+        for (ItemPrice itemPrice : itemPrices) {
+            Item item = db.itemDao().getItemById(itemPrice.itemId);
+            if (item != null) {
+                items.add(item);
+            }
+        }
+        ArrayAdapter<Item> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
         autoCompleteTextViewItems.setAdapter(adapter);
     }
 
@@ -145,5 +138,35 @@ public class AddItemActivity extends AppCompatActivity {
         db.itemPriceDao().deleteItemPricesByItemId(item.id);
         loadItems(); // Reload items to remove the deleted one
         Toast.makeText(this, "Produktua ezabatuta", Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveItem() {
+        String itemName = autoCompleteTextViewItems.getText().toString().trim();
+        String quantityStr = editTextQuantity.getText().toString();
+        String priceStr = editTextPrice.getText().toString();
+
+        if (itemName.isEmpty() || priceStr.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int quantity = Integer.parseInt(quantityStr);
+        double price = Double.parseDouble(priceStr);
+
+        Item selectedItem = db.itemDao().getItemByName(itemName);
+        if (selectedItem == null) {
+            selectedItem = new Item(itemName);
+            db.itemDao().insert(selectedItem);
+            selectedItem = db.itemDao().getItemByName(itemName); // Get the item with the generated ID
+        }
+
+        // Save item price for the society
+        ItemPrice itemPrice = new ItemPrice();
+        itemPrice.societyId = societyId;
+        itemPrice.itemId = selectedItem.id;
+        itemPrice.price = price;
+        db.itemPriceDao().insert(itemPrice);
+
+        Toast.makeText(this, "Item saved successfully", Toast.LENGTH_SHORT).show();
     }
 }
